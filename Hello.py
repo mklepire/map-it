@@ -26,7 +26,7 @@ def run():
 
     st.write("# Welcome to Map It! 👋")
 
-    st.sidebar.success("Select a demo above.")
+    st.sidebar.success("Select map above.")
 
     st.markdown(
         """
