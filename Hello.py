@@ -33,24 +33,22 @@ def get_table_download_link(df, filename="transposed_data.xlsx", text="Download 
 # Styling
 st.markdown("""
 <style>
-    body {
+    .reportview-container {
         background-color: #f0f0f5;
     }
     .stApp {
-        background-color: charcoal;
+        background-color: black;
     }
     .reportview-container .main {
-        background-color: black;
+        background-color: white;
         border-radius: 10px;
         padding: 2rem;
     }
-     .reportview-container .main * {
-        color: black;  
+    .reportview-container .main * {
+        color: #5c5c5c;  /* Change this to your desired color */
     }
 </style>
 """, unsafe_allow_html=True)
-
-
 
 # Main App
 
@@ -59,11 +57,12 @@ st.title("Data Transposer 🔄")
 # State management
 if 'page' not in st.session_state:
     st.session_state.page = 'start'
+if 'next_page' not in st.session_state:
+    st.session_state.next_page = False
 
 # Welcome page
 if st.session_state.page == 'start':
     st.markdown("""
-   
     Welcome to the **Data Transposer**!
     
     This app assists in transposing data from your *Data Download* file to match the format of a *Target Sheet*. 
@@ -72,6 +71,7 @@ if st.session_state.page == 'start':
     with st.container():
         if st.button("Let's get started!"):
             st.session_state.page = 'upload_data'
+            st.session_state.next_page = True
 
 # Data Download Upload & Preview
 elif st.session_state.page == 'upload_data':
@@ -87,6 +87,7 @@ elif st.session_state.page == 'upload_data':
         with st.container():
             if st.button("Continue to Target Sheet"):
                 st.session_state.page = 'upload_target'
+                st.session_state.next_page = True
 
 # Target Sheet Upload & Preview
 elif st.session_state.page == 'upload_target':
@@ -102,6 +103,7 @@ elif st.session_state.page == 'upload_target':
         with st.container():
             if st.button("Continue to Header Mapping"):
                 st.session_state.page = 'map_headers'
+                st.session_state.next_page = True
 
 # Map Headers & Preview Transposed Data
 elif st.session_state.page == 'map_headers':
@@ -130,6 +132,7 @@ elif st.session_state.page == 'map_headers':
                     transposed_data[target_col] = st.session_state.data_df[data_col]
                 st.session_state.transposed_data = transposed_data
                 st.session_state.page = 'download'
+                st.session_state.next_page = True
 
 # Display Transposed Data and Download Link
 elif st.session_state.page == 'download':
@@ -137,5 +140,13 @@ elif st.session_state.page == 'download':
     st.write("### Transposed Data:")
     st.dataframe(st.session_state.transposed_data)
     st.markdown(get_table_download_link(st.session_state.transposed_data), unsafe_allow_html=True)
+
+# Check for state change and perform the necessary action
+if st.session_state.next_page:
+    st.session_state.next_page = False  # Reset the flag
+    st.experimental_rerun()  # Force a rerun of the script
+
+    
+
 
 
